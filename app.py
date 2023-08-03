@@ -170,67 +170,8 @@ def ui_full(launch_kwargs):
                     cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
                 output = gr.Video(label="Generated Music")
-        submit.click(predict_full, inputs=[model, text, melody, duration, topk, topp, temperature, cfg_coef], outputs=[output])
-        gr.Examples(
-            fn=predict_full,
-            examples=[
-                [
-                    "An 80s driving pop song with heavy drums and synth pads in the background",
-                    "./assets/bach.mp3",
-                    "melody"
-                ],
-                [
-                    "A cheerful country song with acoustic guitars",
-                    "./assets/bolero_ravel.mp3",
-                    "melody"
-                ],
-                [
-                    "90s rock song with electric guitar and heavy drums",
-                    None,
-                    "medium"
-                ],
-                [
-                    "a light and cheerly EDM track, with syncopated drums, aery pads, and strong emotions",
-                    "./assets/bach.mp3",
-                    "melody"
-                ],
-                [
-                    "lofi slow bpm electro chill with organic samples",
-                    None,
-                    "medium",
-                ],
-            ],
-            inputs=[text, melody, model],
-            outputs=[output]
-        )
-        gr.Markdown(
-            """
-            ### More details
-
-            The model will generate a short music extract based on the description you provided.
-            The model can generate up to 30 seconds of audio in one pass. It is now possible
-            to extend the generation by feeding back the end of the previous chunk of audio.
-            This can take a long time, and the model might lose consistency. The model might also
-            decide at arbitrary positions that the song ends.
-
-            **WARNING:** Choosing long durations will take a long time to generate (2min might take ~10min). An overlap of 12 seconds
-            is kept with the previously generated chunk, and 18 "new" seconds are generated each time.
-
-            We present 4 model variations:
-            1. Melody -- a music generation model capable of generating music condition on text and melody inputs. **Note**, you can also use text only.
-            2. Small -- a 300M transformer decoder conditioned on text only.
-            3. Medium -- a 1.5B transformer decoder conditioned on text only.
-            4. Large -- a 3.3B transformer decoder conditioned on text only (might OOM for the longest sequences.)
-
-            When using `melody`, ou can optionaly provide a reference audio from
-            which a broad melody will be extracted. The model will then try to follow both the description and melody provided.
-
-            You can also use your own GPU or a Google Colab by following the instructions on our repo.
-            See [github.com/facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft)
-            for more details.
-            """
-        )
-
+        submit.click(predict_full, inputs=[model, text, melody, duration, 250, 0, temperature, cfg_coef], outputs=[output1])
+        print(output1)
         interface.queue().launch(**launch_kwargs)
 
 
@@ -245,8 +186,8 @@ def ui_batched(launch_kwargs):
                     submit = gr.Button("Generate")
             with gr.Column():
                 output = gr.Video(label="Generated Music")
-        submit.click(predict_batched, inputs=[request.text], outputs=[output], batch=True, max_batch_size=MAX_BATCH_SIZE)
-        print(output)
+        submit.click(predict_batched, inputs=[request.text], outputs=[output1], batch=True, max_batch_size=MAX_BATCH_SIZE)
+        print(output1)
         demo.queue(max_size=8 * 4).launch(**launch_kwargs)
 
 
